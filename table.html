@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail Summary</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Mail Summary</h1>
+        <input type="text" id="search" placeholder="Cari Surat...">
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Requester</th>
+                    <th>Nomor Surat</th>
+                    <th>Jenis Surat</th>
+                    <th>Tanggal Surat</th>
+                    <th>Tujuan</th>
+                    <th>Perihal</th>
+                    <th>Dokumen</th>
+                </tr>
+            </thead>
+            <tbody id="dataSurat"></tbody>
+        </table>
+    </div>
+    <script src="firebase.js"></script>
+    <script>
+        const dbRef = firebase.database().ref('surat');
+        const tableBody = document.getElementById('dataSurat');
+
+        dbRef.on('value', (snapshot) => {
+            tableBody.innerHTML = "";
+            let index = 1;
+
+            snapshot.forEach((child) => {
+                const data = child.val();
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${index++}</td>
+                        <td>${data.requester}</td>
+                        <td>${data.nomorSurat}</td>
+                        <td>${data.jenisSurat}</td>
+                        <td>${data.tanggalSurat}</td>
+                        <td>${data.tujuan}</td>
+                        <td>${data.perihal}</td>
+                        <td><a href="${data.fileURL}" target="_blank">View</a></td>
+                    </tr>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
+t

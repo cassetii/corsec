@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Surat</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Divisi Corporate Secretary Management Mail</h1>
+        <form id="formSurat">
+            <label>Requester:</label>
+            <input type="text" id="requester" required>
+            
+            <label>Nomor Surat:</label>
+            <input type="text" id="nomorSurat" required>
+            
+            <label>Jenis Surat:</label>
+            <select id="jenisSurat">
+                <option value="Memo Direksi">Memo Direksi</option>
+                <option value="Memo Corsec">Memo Corsec</option>
+                <option value="Surat Biasa">Surat Biasa</option>
+                <option value="Surat Rahasia">Surat Rahasia</option>
+                <option value="Surat Keputusan">Surat Keputusan</option>
+                <option value="PKS">PKS</option>
+                <option value="MoU">MoU</option>
+            </select>
+            
+            <label>Tanggal Surat:</label>
+            <input type="date" id="tanggalSurat" required>
+            
+            <label>Tujuan:</label>
+            <input type="text" id="tujuan" required>
+            
+            <label>Perihal:</label>
+            <input type="text" id="perihal" required>
+            
+            <label>Upload Dokumen:</label>
+            <input type="file" id="fileDokumen" required>
+            
+            <button type="submit">Simpan</button>
+        </form>
+    </div>
+    <script src="firebase.js"></script>
+    <script>
+        document.getElementById('formSurat').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const requester = document.getElementById('requester').value;
+            const nomorSurat = document.getElementById('nomorSurat').value;
+            const jenisSurat = document.getElementById('jenisSurat').value;
+            const tanggalSurat = document.getElementById('tanggalSurat').value;
+            const tujuan = document.getElementById('tujuan').value;
+            const perihal = document.getElementById('perihal').value;
+            const fileDokumen = document.getElementById('fileDokumen').files[0];
+
+            const storageRef = firebase.storage().ref('dokumen/' + fileDokumen.name);
+            storageRef.put(fileDokumen).then((snapshot) => {
+                snapshot.ref.getDownloadURL().then((url) => {
+                    const dbRef = firebase.database().ref('surat');
+                    dbRef.push({
+                        requester,
+                        nomorSurat,
+                        jenisSurat,
+                        tanggalSurat,
+                        tujuan,
+                        perihal,
+                        fileURL: url
+                    });
+                    alert("Surat berhasil disimpan!");
+                    document.getElementById('formSurat').reset();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+in
